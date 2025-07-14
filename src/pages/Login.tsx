@@ -16,7 +16,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { login } from "@/features/auth/authService";
 import useAuth from "@/hooks/useAuth";
 const Login = () => {
-  const { user,loading:authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -33,9 +33,11 @@ const Login = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      await login(formData);
-      await dispatch(currentUser());
-      navigate("/dashboard");
+      const res = await login(formData);
+      if (res.status === 200) {
+        await dispatch(currentUser());
+        navigate("/dashboard");
+      }
     } catch (error: any) {
       setError(error.response?.data?.message);
       console.error(error);

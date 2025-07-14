@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useNavigate, Link ,Navigate} from "react-router";
-import { useAppDispatch} from "@/hooks/useRedux";
-import {currentUser} from "../features/auth/authSlice"
+import { useNavigate, Link, Navigate } from "react-router";
+import { useAppDispatch } from "@/hooks/useRedux";
+import { currentUser } from "../features/auth/authSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,18 +17,17 @@ import { register } from "@/features/auth/authService";
 import useAuth from "@/hooks/useAuth";
 
 const Register = () => {
-  const {user,loading:authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
-const [showPassword, setShowPassword] = useState(false);
-const [loading,setLoading] = useState(false)
-const [error,setError] = useState<null|any>()
- 
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<null | any>();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,19 +36,21 @@ const [error,setError] = useState<null|any>()
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      setLoading(true)
-      register(formData);
-      await dispatch(currentUser())
-      navigate("/dashboard")
-    } catch (error:any) {
-      setError(error.response?.data?.message)
-      console.error(error)
-    }finally{
-      setLoading(false)
+      setLoading(true);
+      const res = await register(formData);
+      if (res.status == 201) {
+        await dispatch(currentUser());
+        navigate("/dashboard");
+      }
+    } catch (error: any) {
+      setError(error.response?.data?.message);
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
-  if(user && !authLoading){
-    return <Navigate to={"/dashboard"} replace/>
+  if (user && !authLoading) {
+    return <Navigate to={"/dashboard"} replace />;
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted px-4 py-12">
@@ -110,7 +111,7 @@ const [error,setError] = useState<null|any>()
           </CardContent>
           <CardFooter className="flex flex-col gap-4 my-3">
             <Button disabled={loading} type="submit" className="w-full">
-              {loading?"Registering...":"Register"}
+              {loading ? "Registering..." : "Register"}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
               Already have an account?{" "}
