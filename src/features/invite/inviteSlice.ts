@@ -44,7 +44,7 @@ export const ignoreInvite = createAsyncThunk(
   }
 );
 
-interface projectId {
+interface project {
   _id: string;
   name: string;
   createdBy: {
@@ -55,7 +55,7 @@ interface projectId {
 }
 interface Invite {
   _id: string;
-  projectId: projectId;
+  project: project;
 }
 interface InviteState {
   invites: Array<Invite>;
