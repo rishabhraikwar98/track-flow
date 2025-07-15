@@ -6,17 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAppDispatch } from "@/hooks/useRedux";
 import { logoutUser } from "@/features/auth/authSlice";
-import InviteListModal from "@/components/InviteListModal";
-import { Bell } from "lucide-react"; // You can replace with any icon
 
 type User = {
   name: string;
@@ -24,7 +16,7 @@ type User = {
 };
 
 type NavbarProps = {
-  loggedIn: boolean;
+  loggedIn?: boolean;
   user?: User;
 };
 
@@ -56,19 +48,6 @@ const Navbar = ({ loggedIn, user }: NavbarProps) => {
           </div>
         ) : (
           <div className="flex items-center gap-4">
-            {/* Invites Modal */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Bell className="w-5 h-5" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogTitle>Project Invites </DialogTitle>
-                <InviteListModal/>
-              </DialogContent>
-            </Dialog>
-
             {/* Avatar Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -87,6 +66,11 @@ const Navbar = ({ loggedIn, user }: NavbarProps) => {
                   onClick={() => navigate("/dashboard/my-tasks")}
                 >
                   My Tasks
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate("/dashboard/invites")}
+                >
+                  Invites
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
                   Logout
