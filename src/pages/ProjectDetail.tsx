@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, Bug, User, LogOut, MailPlus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
-import CreateOrUpdateProjectModal from "@/components/CreateOrUpdateProjectModal";
+import CreateOrUpdateProjectModal from "@/components/ProjectModal";
 
 const Project = () => {
   const { projectId } = useParams();

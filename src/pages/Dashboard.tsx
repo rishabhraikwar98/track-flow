@@ -1,5 +1,5 @@
 import ProjectCard from "@/components/ProjectCard";
-import CreateOrUProjectModal from "@/components/CreateOrUpdateProjectModal";
+import ProjectModal from "@/components/ProjectModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import { useEffect } from "react";
 import { fetchProjects } from "@/features/project/projectSlice";
@@ -18,7 +18,7 @@ const Dashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">My Projects</h1>
-        <CreateOrUProjectModal trigger={<Button variant="default">+ New Project</Button>} purpose="Create" />
+        <ProjectModal trigger={<Button variant="default">+ New Project</Button>} purpose="Create" />
       </div>
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">

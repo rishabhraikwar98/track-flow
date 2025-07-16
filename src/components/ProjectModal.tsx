@@ -19,7 +19,7 @@ type Props = {
   purpose: "Create" | "Update";
 };
 
-const CreateOrUpdateProjectModal = ({ trigger, purpose }: Props) => {
+const ProjectModal = ({ trigger, purpose }: Props) => {
   const dispatch = useAppDispatch();
   const { loading, selectedProject } = useAppSelector((state) => state.projects);
   const [open, setOpen] = useState(false);
@@ -103,4 +103,4 @@ const CreateOrUpdateProjectModal = ({ trigger, purpose }: Props) => {
   );
 };
 
-export default CreateOrUpdateProjectModal;
+export default ProjectModal;
