@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import ProjectDetail from "./pages/ProjectDetail";
 import NotFound from "./pages/NotFound";
 import MyTasks from "./pages/MyTasks";
+import Issues from "./pages/Issues";
 import ProtectRoute from "./routes/ProtectRoute";
 import { useEffect } from "react";
 import { currentUser } from "./features/auth/authSlice";
@@ -28,12 +29,13 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/invites" element={<Invites/>} />
             <Route path="/dashboard/:projectId" element={<ProjectDetail/>} />
+            <Route path="/dashboard/:projectId/issues" element={<Issues/>} />
             <Route path="/dashboard/my-tasks" element={<MyTasks />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
-      <Toaster position="bottom-center"/>
+      <Toaster position="top-center"/>
     </>
   );
 };
