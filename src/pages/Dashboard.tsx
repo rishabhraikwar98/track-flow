@@ -2,7 +2,7 @@ import ProjectCard from "@/components/ProjectCard";
 import ProjectModal from "@/components/ProjectModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import { useEffect } from "react";
-import { fetchProjects } from "@/features/project/projectSlice";
+import { fetchProjects } from "@/features/project/projectThunk";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 
@@ -18,11 +18,11 @@ const Dashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">My Projects</h1>
-        <ProjectModal trigger={<Button variant="default">+ New Project</Button>} purpose="Create" />
+        <ProjectModal Trigger={<Button variant="default">+ New Project</Button>} Purpose="Create" />
       </div>
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        {loading ? (
+        {loading &&!projects ? (
           Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}

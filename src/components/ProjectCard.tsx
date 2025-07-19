@@ -3,33 +3,21 @@ import { Button } from "@/components/ui/button";
 import { CalendarDays, User, Users, Eye } from "lucide-react";
 import { useNavigate } from "react-router";
 import useAuth from "@/hooks/useAuth";
-
-type Member = {
-  _id: string;
-  name: string;
-  email: string;
-};
-
-type Project = {
-  _id: string;
-  name: string;
-  description?: string;
-  createdAt: string;
-  createdBy: Member;
-  members: Array<Member>;
-};
+import type { Project } from "@/features/project/projectSlice";
+import { format } from "date-fns";
 
 const ProjectCard = ({ project }: { project: Project }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const isCreator = user?._id === project.createdBy._id;
 
   return (
-    <Card className="hover:shadow-xl shadow-md transition-shadow duration-300 p-4 flex flex-col justify-between h-full border border-muted">
+    <Card className="hover:shadow-xl shadow-md transition-shadow duration-300 p-4 flex flex-col border border-muted min-h-64">
       <CardHeader className="p-0 mb-2">
-        <CardTitle className="text-lg">{project.name}</CardTitle>
+        <CardTitle className="text-xl">{project.name}</CardTitle>
         <div className="flex items-center gap-2 mt-1 text-muted-foreground text-sm">
           <CalendarDays className="w-4 h-4" />
-          <span>{new Date(project.createdAt).toLocaleDateString()}</span>
+          <span>{format(project.createdAt, "P")}</span>
         </div>
       </CardHeader>
 
@@ -41,21 +29,19 @@ const ProjectCard = ({ project }: { project: Project }) => {
         <div className="space-y-1 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <User className="w-4 h-4" />
-            <span>
-              Created by:{" "}
-              {project.createdBy._id === user?._id
-                ? "You"
-                : project.createdBy.name}
-            </span>
+            <span>Created by: {isCreator ? "You" : project.createdBy.name}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" />
-            <span>{project.members.length} {project.members.length>1?"Members":"Member"}</span>
+            <span>
+              {project.members.length}{" "}
+              {project.members.length > 1 ? "Members" : "Member"}
+            </span>
           </div>
         </div>
 
-        <div className="mt-4 self-end">
+        <div className="mt-auto pt-4 self-end">
           <Button
             size="sm"
             variant="outline"

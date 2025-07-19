@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   fetchProjectById,
-  updateProject,
   deleteProject,
-} from "@/features/project/projectSlice";
+  leaveProject,
+} from "@/features/project/projectThunk";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, Bug, User, LogOut, MailPlus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
-import CreateOrUpdateProjectModal from "@/components/ProjectModal";
+import ProjectModal from "@/components/ProjectModal";
+import { sendInvite } from "@/features/invite/inviteThunk";
 
 const Project = () => {
   const { projectId } = useParams();
@@ -16,7 +17,7 @@ const Project = () => {
   const navigate = useNavigate();
 
   const [inviteEmail, setInviteEmail] = useState("");
-  const { selectedProject, loading, error } = useAppSelector(
+  const { selectedProject, loading } = useAppSelector(
     (state) => state.projects
   );
   const currentUser = useAppSelector((state) => state.auth.user);
@@ -34,73 +35,62 @@ const Project = () => {
       "Are you sure you want to delete this project?"
     );
     if (confirm && projectId) {
-      // await dispatch(deleteProject(projectId));
+      await dispatch(deleteProject(projectId));
       navigate("/dashboard");
     }
   };
 
   const handleLeave = async () => {
-    // const confirm = window.confirm("Are you sure you want to leave this project?");
-    // if (confirm && projectId) {
-    //   await dispatch(leaveProject(projectId));
-    //   navigate('/dashboard');
-    // }
+    const confirm = window.confirm(
+      "Are you sure you want to leave this project?"
+    );
+    if (confirm && projectId) {
+      await dispatch(leaveProject(projectId));
+      navigate("/dashboard");
+    }
   };
 
   const handleInvite = async () => {
-    if (!inviteEmail.trim()) return;
-    // await dispatch(inviteMember({ projectId, email: inviteEmail }));
+    if (!inviteEmail.trim() || !projectId) return;
+    await dispatch(sendInvite({ projectId: projectId, email: inviteEmail }));
     setInviteEmail("");
   };
 
-  if (loading || !selectedProject) {
+  if (loading &&!selectedProject) {
     return (
       <div className="max-w-4xl mx-auto py-16 px-4 text-center">
         <p className="text-gray-500 text-lg">Loading project...</p>
       </div>
     );
   }
-
-  if (error) {
-    return (
-      <div className="max-w-4xl mx-auto py-16 px-4 text-center">
-        <p className="text-red-500 text-lg">Error: {error}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-10">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-4 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">
-            {selectedProject.name}
+            {selectedProject?.name}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             Created by:{" "}
             <span className="font-medium text-gray-700">
-              {selectedProject.createdBy?.name}
+              {selectedProject?.createdBy?.name}
             </span>{" "}
-            ({selectedProject.createdBy?.email})
+            ({selectedProject?.createdBy?.email})
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {isCreator && (
             <>
-              <CreateOrUpdateProjectModal
-                purpose="Update"
-                trigger={
-                  <Button
-                    variant="outline"
-                    className="flex items-center gap-1"
-                  >
+              <ProjectModal
+                Purpose="Update"
+                Trigger={
+                  <Button variant="outline" className="flex items-center gap-1">
                     <Pencil className="w-4 h-4" />
                     Edit
                   </Button>
                 }
               />
-
               <Button
                 variant="destructive"
                 className="flex items-center gap-1"
@@ -135,7 +125,7 @@ const Project = () => {
       <div className="space-y-2">
         <h2 className="text-xl font-semibold text-gray-700">Description</h2>
         <p className="text-gray-600 leading-relaxed">
-          {selectedProject.description || "No description provided."}
+          {selectedProject?.description || "No description provided."}
         </p>
       </div>
       {/* Invite Member */}
@@ -158,11 +148,11 @@ const Project = () => {
       {/* Members */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-700">Team Members</h2>
-        {selectedProject.members?.length === 0 ? (
+        {selectedProject?.members?.length === 0 ? (
           <p className="text-gray-500">No members found.</p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {selectedProject.members.map((member) => {
+            {selectedProject?.members.map((member) => {
               const tags: string[] = [];
               if (member._id === selectedProject.createdBy?._id)
                 tags.push("Creator");

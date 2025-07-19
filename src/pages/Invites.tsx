@@ -4,7 +4,7 @@ import {
   fetchInvites,
   acceptInvite,
   ignoreInvite,
-} from "@/features/invite/inviteSlice";
+} from "@/features/invite/inviteThunk";
 
 import { Button } from "@/components/ui/button";
 import { MailOpen, User2 } from "lucide-react";

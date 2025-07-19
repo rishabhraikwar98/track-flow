@@ -1,49 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import API from "@/lib/axios";
-import toast from "react-hot-toast";
-export const fetchInvites = createAsyncThunk(
-  "invites/get",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await API.get("/invites");
-      return res.data;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
-      return rejectWithValue(
-        error?.response?.data?.message || "Something went wrong"
-      );
-    }
-  }
-);
-export const acceptInvite = createAsyncThunk(
-  "invites/accept",
-  async (inviteId: string, { rejectWithValue }) => {
-    try {
-      const res = await API.post(`/invites/accept/${inviteId}`);
-      return res.data;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
-      return rejectWithValue(
-        error?.response?.data?.message || "Something went wrong"
-      );
-    }
-  }
-);
-export const ignoreInvite = createAsyncThunk(
-  "invites/ignore",
-  async (inviteId: string, { rejectWithValue }) => {
-    try {
-      const res = await API.delete(`/invites/ignore/${inviteId}`);
-      return res.data;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
-      return rejectWithValue(
-        error?.response?.data?.message || "Something went wrong"
-      );
-    }
-  }
-);
-
+import { createSlice } from "@reduxjs/toolkit";
+import {
+  fetchInvites,
+  ignoreInvite,
+  acceptInvite,
+  sendInvite,
+} from "./inviteThunk";
 interface project {
   _id: string;
   name: string;
@@ -111,6 +72,17 @@ const inviteSlice = createSlice({
         });
       })
       .addCase(ignoreInvite.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(sendInvite.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(sendInvite.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(sendInvite.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
