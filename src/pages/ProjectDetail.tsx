@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, Bug, User, LogOut, MailPlus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import ProjectModal from "@/components/ProjectModal";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { sendInvite } from "@/features/invite/inviteThunk";
 
 const Project = () => {
@@ -17,6 +18,8 @@ const Project = () => {
   const navigate = useNavigate();
 
   const [inviteEmail, setInviteEmail] = useState("");
+  const [leaveAlertOpen, setleaveAlertOpen] = useState(false);
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const { selectedProject, loading } = useAppSelector(
     (state) => state.projects
   );
@@ -31,23 +34,19 @@ const Project = () => {
   const isCreator = currentUser?._id === selectedProject?.createdBy?._id;
 
   const handleDelete = async () => {
-    const confirm = window.confirm(
-      "Are you sure you want to delete this project?"
-    );
-    if (confirm && projectId) {
+    if (projectId) {
       await dispatch(deleteProject(projectId));
       navigate("/dashboard");
     }
+    setDeleteAlertOpen(false);
   };
 
   const handleLeave = async () => {
-    const confirm = window.confirm(
-      "Are you sure you want to leave this project?"
-    );
-    if (confirm && projectId) {
+    if (projectId) {
       await dispatch(leaveProject(projectId));
       navigate("/dashboard");
     }
+    setleaveAlertOpen(false);
   };
 
   const handleInvite = async () => {
@@ -64,6 +63,19 @@ const Project = () => {
     );
   }
   return (
+    <>
+    <ConfirmDialog
+      open={leaveAlertOpen}
+      onCancel={() => setleaveAlertOpen(false)}
+      title="Leave Project"
+      description="Are you sure you want to Leave this project? This action cannot be undone."
+      onConfirm={handleLeave}/>
+    <ConfirmDialog
+      open={deleteAlertOpen}
+      onCancel={() => setDeleteAlertOpen(false)}
+      title="Delete Project"
+      description="Are you sure you want to Delete this project? This action cannot be undone."
+      onConfirm={handleDelete}/>
     <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-10">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-4 gap-4">
@@ -94,7 +106,7 @@ const Project = () => {
               <Button
                 variant="destructive"
                 className="flex items-center gap-1"
-                onClick={handleDelete}
+                onClick={() => setDeleteAlertOpen(true)}
               >
                 <Trash2 className="w-4 h-4" />
                 Delete
@@ -112,7 +124,7 @@ const Project = () => {
             <Button
               variant="secondary"
               className="flex items-center gap-1"
-              onClick={handleLeave}
+              onClick={() => setleaveAlertOpen(true)}
             >
               <LogOut className="w-4 h-4" />
               Leave Project
@@ -189,6 +201,7 @@ const Project = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
