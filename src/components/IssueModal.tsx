@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import useAuth from "@/hooks/useAuth";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 interface IssueModalProps {
   open: boolean;
@@ -43,6 +44,7 @@ const IssueModal = ({ open, onClose, mode }: IssueModalProps) => {
   const { selectedProject } = useAppSelector((state) => state.projects);
   const { user } = useAuth();
 
+  const [showAlert, setShowAlert] = useState(false);
   const isProjectCreator = selectedProject?.createdBy?._id === user?._id;
   const isIssueCreator = selectedIssue?.createdBy?._id === user?._id;
   const isCreator = isProjectCreator || isIssueCreator;
@@ -97,6 +99,7 @@ const IssueModal = ({ open, onClose, mode }: IssueModalProps) => {
     if (selectedIssue?._id) {
       dispatch(deleteIssue(selectedIssue._id));
       onClose();
+      setShowAlert(false);
     }
   };
 
@@ -196,7 +199,7 @@ const IssueModal = ({ open, onClose, mode }: IssueModalProps) => {
         {(mode === "create" || isCreator) && (
           <div className="flex justify-end gap-2 mt-4">
             {mode === "edit" && (
-              <Button variant="destructive" onClick={handleDelete}>
+              <Button variant="destructive" onClick={()=> setShowAlert(true)}>
                 Delete
               </Button>
             )}
@@ -206,6 +209,12 @@ const IssueModal = ({ open, onClose, mode }: IssueModalProps) => {
           </div>
         )}
       </DialogContent>
+      <ConfirmDialog
+        open={showAlert}
+        onCancel={() => setShowAlert(false)}
+        onConfirm={handleDelete}
+        title="Delete Issue"
+        description="Are you sure you want to delete this issue?"/>
     </Dialog>
   );
 };
